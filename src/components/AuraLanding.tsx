@@ -118,7 +118,8 @@ async function tryCaptchaToken(): Promise<string | null> {
   // (https://challenges.cloudflare.com/turnstile/v0/api.js). Если site_key
   // не задан в env — backend стоит passthrough, не дёргаем.
   const key = import.meta.env.VITE_TURNSTILE_SITE_KEY;
-  if (!key || !window.turnstile) return null;
+  const turnstile = window.turnstile;
+  if (!key || !turnstile) return null;
   return new Promise((resolve) => {
     let container = document.getElementById("cf-turnstile-invisible");
     if (!container) {
@@ -133,9 +134,9 @@ async function tryCaptchaToken(): Promise<string | null> {
     try {
       let widgetId: string | undefined;
       const cleanup = () => {
-        try { if (widgetId && window.turnstile) window.turnstile.remove(widgetId); } catch {}
+        try { if (widgetId) turnstile.remove(widgetId); } catch {}
       };
-      widgetId = window.turnstile.render(container, {
+      widgetId = turnstile.render(container, {
         sitekey: key,
         size: "invisible",
         callback: (token: string) => { cleanup(); resolve(token); },
