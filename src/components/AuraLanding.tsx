@@ -354,6 +354,8 @@ function WelcomeScreen({ onRequest, loading, hasActive }: { onRequest: () => voi
 
       <HowItWorks />
 
+      <AboutService />
+
       <section className="relative px-6 pb-32">
         <div className="mx-auto grid max-w-5xl gap-4 sm:grid-cols-3">
           <FeatureCard icon={Shield} title="Полное шифрование" desc="Никто не видит ваш трафик" />
@@ -403,7 +405,7 @@ function HowItWorks() {
   const steps = [
     { icon: ShieldCheck, title: "Получите ссылку", desc: "Один клик — и сервер выдаёт вам персональную защищённую подписку." },
     { icon: Smartphone, title: "Установите Karing", desc: "Бесплатное приложение для iOS, Android и десктопа." },
-    { icon: Link2, title: "Активируйте", desc: "Вставьте ссылку в Karing и нажмите подключиться. Готово." },
+    { icon: Link2, title: "Активируйте", desc: "Нажмите «Открыть Karing» — ссылка вставится автоматически. Остаётся подключиться." },
   ];
   return (
     <section className="relative px-6 pb-24 pt-8">
@@ -425,6 +427,68 @@ function HowItWorks() {
               <div className="mt-2 text-[10px] uppercase tracking-[0.25em] text-white/35">Шаг {i + 1}</div>
               <div className="mt-2 text-base font-medium text-white">{s.title}</div>
               <p className="mt-2 max-w-xs text-sm font-light text-white/50">{s.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ---------- About: explanation of what the service is ----------
+function AboutService() {
+  const ref = useReveal<HTMLDivElement>();
+  const points = [
+    {
+      icon: Sparkles,
+      title: "Ключ-ссылка для старта",
+      desc: "Сайт мгновенно выдаёт персональный ключ — это ссылка для активации временного безопасного доступа, если у вас его ещё не было.",
+    },
+    {
+      icon: Link2,
+      title: "Постоянный ключ через бота",
+      desc: "Запустите нашего бота в Telegram — он закрепит за вами постоянную ссылку, которую всегда можно выписать заново.",
+    },
+    {
+      icon: Smartphone,
+      title: "Вставьте в Karing",
+      desc: "По короткой видеоинструкции добавьте ключ в приложение Karing — и пользуйтесь безопасным доступом 30 дней.",
+    },
+    {
+      icon: ShieldCheck,
+      title: "Понравилось — продлите",
+      desc: "Через 30 дней решаете сами: оплатить продление или просто остановиться. Никаких автосписаний и подписок по умолчанию.",
+    },
+  ];
+  return (
+    <section className="relative px-6 pb-24">
+      <div ref={ref} className="reveal mx-auto max-w-4xl">
+        <div className="mb-10 text-center">
+          <div className="text-[11px] uppercase tracking-[0.3em] text-white/40">Если кратко</div>
+          <h2 className="mt-3 text-3xl tracking-tight text-white sm:text-4xl">
+            <span className="font-light">Для чего</span>{" "}
+            <span className="font-display-italic text-white/75">этот сайт</span>
+          </h2>
+          <p className="mt-5 text-base font-light leading-relaxed text-white/55 sm:text-lg">
+            Здесь вы получаете ключ-ссылку — пропуск к безопасному доступу на пробный период.
+            Дальше — Telegram-бот, приложение Karing и спокойные 30 дней.
+            Понравится — оплатите и останетесь. Нет — просто закроете и забудете.
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          {points.map((p, i) => (
+            <div
+              key={i}
+              className="flex items-start gap-4 rounded-2xl border border-white/8 bg-white/[0.015] p-6 backdrop-blur-sm"
+            >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-black">
+                <p.icon className="h-4 w-4 text-white/75" strokeWidth={1.5} />
+              </div>
+              <div>
+                <div className="text-base font-medium text-white">{p.title}</div>
+                <p className="mt-1.5 text-sm font-light leading-relaxed text-white/55">{p.desc}</p>
+              </div>
             </div>
           ))}
         </div>
