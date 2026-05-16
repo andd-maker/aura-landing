@@ -14,6 +14,8 @@ interface ApiResponse {
   expires_at: string; // ISO
   attempts_left: number;
   retry_after_seconds: number;
+  /** Deep link в TG-бот с этой сессии: t.me/<bot>?start=onb_<token> */
+  telegram_deep_link?: string;
 }
 
 const COOKIE_NAME = "aura_onb";
@@ -826,7 +828,7 @@ function ActiveScreen({
 
         <div className="mt-20">
           <a
-            href={TG_BOT}
+            href={data.telegram_deep_link ?? TG_BOT}
             target="_blank"
             rel="noreferrer"
             className="forever-card group relative block overflow-hidden rounded-3xl border border-emerald-400/20 bg-gradient-to-br from-emerald-500/[0.08] via-white/[0.02] to-cyan-500/[0.06] p-8 sm:p-10 transition-all duration-500 hover:border-emerald-400/40 hover:from-emerald-500/[0.12] hover:to-cyan-500/[0.10]"
