@@ -27,7 +27,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           react: ["react", "react-dom"],
-          qrcode: ["qrcode"],
           lenis: ["lenis"],
         },
       },

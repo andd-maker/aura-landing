@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import QRCode from "qrcode";
 import { Shield, Zap, Globe, Copy, Check, Apple, Play, Github, ExternalLink, ArrowLeft, Infinity as InfinityIcon, Sparkles, ArrowRight, Link2, Smartphone, ShieldCheck } from "lucide-react";
 import logo from "@/assets/aura-logo.png";
 import { useReveal, useScrolled, useLenisScroll, useLiveUsers } from "@/hooks/use-aura-effects";
@@ -646,7 +645,6 @@ function ActiveScreen({
   data: ApiResponse;
   onCopy: () => void;
 }) {
-  const [qrDataUrl, setQrDataUrl] = useState<string>("");
   const [copied, setCopied] = useState(false);
   const platform = usePlatform();
   const now = useNow(true);
@@ -655,14 +653,6 @@ function ActiveScreen({
 
   const timerCls =
     remaining <= 600 ? "timer-critical" : remaining <= 1800 ? "timer-warn" : "text-white";
-
-  useEffect(() => {
-    QRCode.toDataURL(data.subscription_url, {
-      margin: 1,
-      width: 640,
-      color: { dark: "#ffffff", light: "#00000000" },
-    }).then(setQrDataUrl);
-  }, [data.subscription_url]);
 
   const handleCopy = () => {
     onCopy();
@@ -726,21 +716,9 @@ function ActiveScreen({
           </div>
         </div>
 
-        {/* Mobile: deep link CTA. Desktop: QR for cross-device scan */}
-        <div className="mt-12 hidden sm:flex flex-col items-center">
-          <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-6">
-            {qrDataUrl ? (
-              <img
-                src={qrDataUrl}
-                alt="Subscription QR"
-                className="qr-reveal h-[280px] w-[280px] sm:h-[320px] sm:w-[320px]"
-              />
-            ) : (
-              <div className="skeleton-shimmer h-[280px] w-[280px] rounded-2xl sm:h-[320px] sm:w-[320px]" />
-            )}
-          </div>
-          <div className="mt-3 text-xs font-light text-white/40">Отсканируйте телефоном</div>
-        </div>
+        {/* QR убран — iOS Camera открывает обычный URL в Safari и показывает raw JSON.
+            Для cross-device transfer достаточно URL ниже + кнопка "Открыть в Karing"
+            на мобильной версии (deeplink karing://). */}
 
         <div className="mt-10 flex flex-col gap-3 sm:hidden">
           <a
