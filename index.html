@@ -23,8 +23,9 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap"
     />
 
-    <!-- Yandex SmartCaptcha invisible. Включится автоматом если VITE_YANDEX_CAPTCHA_SITE_KEY задан. -->
-    <script src="https://smartcaptcha.yandexcloud.net/captcha.js" defer></script>
+    <!-- Cloudflare Turnstile (invisible). Дёргается через window.turnstile.render()
+         если VITE_TURNSTILE_SITE_KEY задан. См. tryCaptchaToken() в AuraLanding.tsx. -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
   </head>
   <body class="bg-black">
     <div id="root"></div>

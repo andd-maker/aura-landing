@@ -112,16 +112,42 @@ async function requestOnboarding(captchaToken: string | null): Promise<ApiRespon
 }
 
 async function tryCaptchaToken(): Promise<string | null> {
-  // SmartCaptcha грузится из index.html (defer). Если site_key не задан в .env —
-  // не дёргаем (backend стоит passthrough, CAPTCHA_ENABLED=False).
-  const key = import.meta.env.VITE_YANDEX_CAPTCHA_SITE_KEY;
-  if (!key || !window.smartCaptcha) return null;
-  try {
-    return await window.smartCaptcha.execute(key);
-  } catch (err) {
-    console.warn("[onboarding] captcha execute failed:", err);
-    return null;
-  }
+  // Cloudflare Turnstile (invisible mode). Грузится из index.html
+  // (https://challenges.cloudflare.com/turnstile/v0/api.js). Если site_key
+  // не задан в env — backend стоит passthrough, не дёргаем.
+  const key = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+  if (!key || !window.turnstile) return null;
+  return new Promise((resolve) => {
+    let container = document.getElementById("cf-turnstile-invisible");
+    if (!container) {
+      container = document.createElement("div");
+      container.id = "cf-turnstile-invisible";
+      container.style.position = "fixed";
+      container.style.bottom = "-1000px";
+      container.style.left = "-1000px";
+      container.style.pointerEvents = "none";
+      document.body.appendChild(container);
+    }
+    try {
+      let widgetId: string | undefined;
+      const cleanup = () => {
+        try { if (widgetId && window.turnstile) window.turnstile.remove(widgetId); } catch {}
+      };
+      widgetId = window.turnstile.render(container, {
+        sitekey: key,
+        size: "invisible",
+        callback: (token: string) => { cleanup(); resolve(token); },
+        "error-callback": () => { cleanup(); resolve(null); },
+        "expired-callback": () => { cleanup(); resolve(null); },
+      });
+      // Invisible widget auto-executes при render() — execute() явно не нужен.
+      // Safety timeout 10s — если callback не вызвался.
+      setTimeout(() => { cleanup(); resolve(null); }, 10000);
+    } catch (err) {
+      console.warn("[onboarding] turnstile failed:", err);
+      resolve(null);
+    }
+  });
 }
 
 // ---------- Tick hook ----------
