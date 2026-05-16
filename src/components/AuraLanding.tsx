@@ -348,7 +348,7 @@ function WelcomeScreen({ onRequest, loading, hasActive }: { onRequest: () => voi
           </div>
           <div className="mt-5 flex items-center gap-1.5 text-xs font-light text-white/35">
             <Shield className="h-3 w-3" strokeWidth={1.5} />
-            Защищено Yandex SmartCaptcha
+            Защищено Cloudflare Turnstile
           </div>
         </div>
       </section>

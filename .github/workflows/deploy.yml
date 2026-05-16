@@ -1,3 +1,4 @@
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -23,6 +24,7 @@ jobs:
       - name: Build
         env:
           VITE_API_BASE: ${{ vars.VITE_API_BASE }}
+          VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
           BASE_URL: /aura-landing/
         run: bun run build
       - uses: actions/upload-pages-artifact@v3
