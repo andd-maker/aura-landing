@@ -7,11 +7,13 @@ import tsconfigPaths from "vite-tsconfig-paths";
 // lovable-config — лендинг живёт как статика на GitHub Pages.
 // См. CLAUDE_PITFALLS §3.66: Lovable генерит SSR-overkill, надо упрощать.
 //
-// BASE_URL переопределяется в GitHub Actions:
-//  - GH Pages project-page: /aura-landing/  (дефолт)
-//  - custom domain или user-page: BASE_URL=/ через env
+// base = '/aura-landing/' — фиксированный путь под GH Pages project-page
+// (репо andd-maker/aura-landing → andd-maker.github.io/aura-landing/).
+// Если когда-то переедем на custom domain или user-page (andd-maker.github.io)
+// — поменять на '/' (отдельным коммитом, ENV-driven избегаем чтобы не тащить
+// @types/node ради одной строки).
 export default defineConfig({
-  base: process.env.BASE_URL || "/aura-landing/",
+  base: "/aura-landing/",
   plugins: [
     react(),
     tailwindcss(),
