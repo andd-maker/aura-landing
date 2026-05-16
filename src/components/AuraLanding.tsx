@@ -715,7 +715,7 @@ function ActiveScreen({
 
         <div className="mt-10 flex flex-col gap-3 sm:hidden">
           <a
-            href={`karing://install-config?url=${encodeURIComponent(data.subscription_url)}`}
+            href={`karing://install-config?url=${encodeURIComponent(data.subscription_url)}&name=${encodeURIComponent("Aura 3h")}`}
             className="btn-silver flex items-center justify-center rounded-full px-8 py-4 text-base font-medium tracking-tight"
           >
             Открыть в Karing
