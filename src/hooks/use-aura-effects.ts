@@ -68,9 +68,15 @@ export function useLiveUsers(base = 1587) {
   const [count, setCount] = useState(base);
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const KEY = "aura_live_users";
+    // KEY bumped to v2 — реалистичный base (245) после первичного запуска.
+    // Старый ключ "aura_live_users" больше не читается. Если потребуется
+    // ещё раз перезапустить counter — bump до v3.
+    const KEY = "aura_live_users_v2";
+    try { localStorage.removeItem("aura_live_users"); } catch {}
     const stored = Number(localStorage.getItem(KEY));
-    let current = stored && stored >= base ? stored : base;
+    // Сбрасываем если stored сильно превышает base (старый кэш с другого base).
+    const drift = stored - base;
+    let current = stored && stored >= base && drift < 200 ? stored : base;
     setCount(current);
 
     const tick = () => {
