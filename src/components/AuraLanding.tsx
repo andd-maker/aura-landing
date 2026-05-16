@@ -313,7 +313,7 @@ function WelcomeScreen({ onRequest, loading, hasActive }: { onRequest: () => voi
           <SocialProof />
 
           <div className="mt-10">
-            <SilverButton onClick={onRequest} loading={loading} magnetic>
+            <SilverButton onClick={onRequest} loading={loading} className="btn-silver-glow">
               {hasActive ? "Продолжить сессию" : "Получить доступ"}
             </SilverButton>
           </div>
@@ -341,7 +341,7 @@ function WelcomeScreen({ onRequest, loading, hasActive }: { onRequest: () => voi
 
 // ---------- Social proof: live counter + avatars ----------
 function SocialProof() {
-  const count = useLiveUsers(1587);
+  const count = useLiveUsers(245);
   const ref = useReveal<HTMLDivElement>();
   const avatarColors = [
     "from-emerald-400 to-cyan-500",
@@ -785,8 +785,8 @@ function ActiveScreen({
           <div className="mb-3 text-xs uppercase tracking-[0.25em] text-white/40">Видеоинструкция</div>
           <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-2">
             <video
-              src="/video/karing-tutorial.mp4"
-              poster="/video/karing-tutorial-poster.jpg"
+              src={`${import.meta.env.BASE_URL}video/karing-tutorial.mp4`}
+              poster={`${import.meta.env.BASE_URL}video/karing-tutorial-poster.jpg`}
               controls
               playsInline
               preload="metadata"

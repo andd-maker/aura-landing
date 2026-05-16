@@ -66,6 +66,16 @@
   .btn-silver:active {
     transform: scale(0.97);
   }
+  .btn-silver-glow {
+    animation: btn-silver-glow 3.2s ease-in-out infinite;
+  }
+  @keyframes btn-silver-glow {
+    0%, 100% { box-shadow: 0 0 24px rgba(176, 184, 196, 0.35), 0 0 48px rgba(176, 184, 196, 0.15); }
+    50% { box-shadow: 0 0 36px rgba(255, 255, 255, 0.55), 0 0 72px rgba(176, 184, 196, 0.3); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .btn-silver-glow { animation: none; }
+  }
   .btn-ghost {
     background: transparent;
     border: 1px solid rgba(255,255,255,0.2);
