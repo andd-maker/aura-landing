@@ -840,8 +840,11 @@ function ActiveScreen({
               ))}
             </div>
           </StepCard>
-          <StepCard step="2" title="При первом запуске: выберите Русский язык, согласитесь со всеми параметрами по умолчанию" />
-          <StepCard step="3" title="Откройте Karing → '+' → 'Добавление подписки' → вставьте ссылку выше">
+          <StepCard step="2" title="При первом запуске выберите Русский язык и согласитесь с параметрами по умолчанию" />
+          <StepCard step="3" title="Нажмите «Открыть в Karing» выше — ключ добавится сам, подтвердите импорт">
+            <div className="mt-3 text-xs font-light text-white/50">
+              На компьютере или если Karing не открылся — скопируйте ссылку выше, затем в Karing нажмите «+» → «Добавление подписки» → вставьте.
+            </div>
             <button
               onClick={scrollToVideo}
               className="mt-4 text-xs font-light text-white/50 underline-offset-4 hover:text-white hover:underline"
@@ -849,7 +852,7 @@ function ActiveScreen({
               Не получается? Смотрите видео ↓
             </button>
           </StepCard>
-          <StepCard step="4" title="Активируйте соединение" />
+          <StepCard step="4" title="Вернитесь в Karing и нажмите большую кнопку — соединение активно" />
         </div>
 
         <div id="video-tutorial" className="mt-10 scroll-mt-20">
