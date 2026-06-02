@@ -784,7 +784,7 @@ function ActiveScreen({
             Для cross-device transfer достаточно URL ниже + кнопка "Открыть в Karing"
             на мобильной версии (deeplink karing://). */}
 
-        <div className="mt-10 flex flex-col gap-3 sm:hidden">
+        <div className="mt-10 flex flex-col gap-3">
           <a
             href={`karing://install-config?url=${encodeURIComponent(data.subscription_url)}&name=${encodeURIComponent("Aura 3h")}`}
             className="btn-silver flex items-center justify-center rounded-full px-8 py-4 text-base font-medium tracking-tight"
@@ -792,7 +792,7 @@ function ActiveScreen({
             Открыть в Karing
           </a>
           <div className="text-center text-xs font-light text-white/40">
-            Если Karing не открылся — скопируйте ссылку ниже
+            Один тап — ключ добавится сам. Если не открылось, скопируйте ссылку ниже.
           </div>
         </div>
 
@@ -841,9 +841,12 @@ function ActiveScreen({
             </div>
           </StepCard>
           <StepCard step="2" title="При первом запуске выберите Русский язык и согласитесь с параметрами по умолчанию" />
-          <StepCard step="3" title="Нажмите «Открыть в Karing» выше — ключ добавится сам, подтвердите импорт">
-            <div className="mt-3 text-xs font-light text-white/50">
-              На компьютере или если Karing не открылся — скопируйте ссылку выше, затем в Karing нажмите «+» → «Добавление подписки» → вставьте.
+          <StepCard step="3" title="Добавьте ключ в Karing">
+            <div className="mt-3 text-sm font-light text-white/70">
+              Нажмите кнопку <span className="text-white">«Открыть в Karing»</span> над ключом — приложение откроется и само добавит ключ, подтвердите импорт.
+            </div>
+            <div className="mt-2 text-xs font-light text-white/50">
+              Если кнопка не сработала или вы на компьютере — нажмите «Скопировать», затем в Karing: «+» → «Добавление подписки» → вставьте ссылку.
             </div>
             <button
               onClick={scrollToVideo}
