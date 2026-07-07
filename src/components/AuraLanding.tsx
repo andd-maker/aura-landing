@@ -59,6 +59,43 @@ function usePlatform(): Platform {
   return p;
 }
 
+// ---------- Karing download (single source of truth) ----------
+const KARING_STORES = {
+  ios: { href: "https://apps.apple.com/app/karing/id6472431552", icon: Apple, label: "App Store" },
+  android: { href: "https://play.google.com/store/apps/details?id=com.nebula.karing", icon: Play, label: "Google Play" },
+  other: { href: "https://github.com/KaringX/karing/releases/latest", icon: Github, label: "GitHub" },
+} as const;
+
+/** Кнопки скачивания Karing, отсортированные по платформе (primary = магазин юзера). */
+function KaringDownloadRow({ className = "" }: { className?: string }) {
+  const platform = usePlatform();
+  const primaryStore =
+    platform === "ios" ? KARING_STORES.ios : platform === "android" ? KARING_STORES.android : null;
+  const secondaryStores = primaryStore
+    ? Object.entries(KARING_STORES).filter(([k]) => k !== (platform === "ios" ? "ios" : "android"))
+    : Object.entries(KARING_STORES);
+  return (
+    <div className={`flex flex-wrap gap-2 ${className}`}>
+      {primaryStore && (
+        <GhostButton href={primaryStore.href} className="!border-white/30 !bg-white/5">
+          <span className="flex items-center gap-2">
+            <primaryStore.icon className="h-4 w-4" strokeWidth={1.5} />
+            {primaryStore.label}
+          </span>
+        </GhostButton>
+      )}
+      {secondaryStores.map(([k, s]) => (
+        <GhostButton key={k} href={s.href} className="opacity-60 hover:opacity-100">
+          <span className="flex items-center gap-2">
+            <s.icon className="h-4 w-4" strokeWidth={1.5} />
+            {s.label}
+          </span>
+        </GhostButton>
+      ))}
+    </div>
+  );
+}
+
 // ---------- Real API ----------
 // Backend: subscription_server.py + onboarding_routes.py на 5.42:5001,
 // проксируется через Cloudflare Tunnel на api-aura.trycloudflare.com (или свой домен).
@@ -348,6 +385,15 @@ function WelcomeScreen({ onRequest, loading, hasActive }: { onRequest: () => voi
           <div className="mt-5 flex items-center gap-1.5 text-xs font-light text-white/35">
             <Shield className="h-3 w-3" strokeWidth={1.5} />
             Защищено Cloudflare Turnstile
+          </div>
+
+          {/* Karing можно поставить сразу — пока сервер формирует ссылку.
+              Убирает "мёртвое ожидание" на медленном/залипшем запросе. */}
+          <div className="mt-10 flex flex-col items-center gap-2.5">
+            <div className="text-[11px] font-light uppercase tracking-[0.2em] text-white/40">
+              Пока готовится ссылка — установите Karing
+            </div>
+            <KaringDownloadRow className="justify-center" />
           </div>
         </div>
       </section>
@@ -710,7 +756,6 @@ function ActiveScreen({
   onCopy: () => void;
 }) {
   const [copied, setCopied] = useState(false);
-  const platform = usePlatform();
   const now = useNow(true);
   const remaining = Math.max(0, Math.floor((new Date(data.expires_at).getTime() - now) / 1000));
   const sessionNumber = 3 - data.attempts_left;
@@ -730,17 +775,6 @@ function ActiveScreen({
   const scrollToVideo = () => {
     document.getElementById("video-tutorial")?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
-
-  // Order app store buttons by platform
-  const stores = {
-    ios: { href: "https://apps.apple.com/app/karing/id6472431552", icon: Apple, label: "App Store" },
-    android: { href: "https://play.google.com/store/apps/details?id=com.nebula.karing", icon: Play, label: "Google Play" },
-    other: { href: "https://github.com/KaringX/karing/releases/latest", icon: Github, label: "GitHub" },
-  } as const;
-  const primaryStore = platform === "ios" ? stores.ios : platform === "android" ? stores.android : null;
-  const secondaryStores = primaryStore
-    ? Object.entries(stores).filter(([k]) => k !== (platform === "ios" ? "ios" : "android"))
-    : Object.entries(stores);
 
   const scrolled = useScrolled(220);
 
@@ -821,24 +855,7 @@ function ActiveScreen({
 
         <div className="mt-16 space-y-3">
           <StepCard step="1" title="Скачайте Karing">
-            <div className="mt-4 flex flex-wrap gap-2">
-              {primaryStore && (
-                <GhostButton href={primaryStore.href} className="!border-white/30 !bg-white/5">
-                  <span className="flex items-center gap-2">
-                    <primaryStore.icon className="h-4 w-4" strokeWidth={1.5} />
-                    {primaryStore.label}
-                  </span>
-                </GhostButton>
-              )}
-              {secondaryStores.map(([k, s]) => (
-                <GhostButton key={k} href={s.href} className="opacity-60 hover:opacity-100">
-                  <span className="flex items-center gap-2">
-                    <s.icon className="h-4 w-4" strokeWidth={1.5} />
-                    {s.label}
-                  </span>
-                </GhostButton>
-              ))}
-            </div>
+            <KaringDownloadRow className="mt-4" />
           </StepCard>
           <StepCard step="2" title="При первом запуске выберите Русский язык и согласитесь с параметрами по умолчанию" />
           <StepCard step="3" title="Добавьте ключ в Karing">
