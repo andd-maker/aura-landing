@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Shield, Zap, Globe, Copy, Check, Apple, Play, Github, ExternalLink, ArrowLeft, Infinity as InfinityIcon, Sparkles, ArrowRight, Link2, Smartphone, ShieldCheck } from "lucide-react";
+import { Shield, Zap, Globe, Copy, Check, Apple, Github, ExternalLink, ArrowLeft, Infinity as InfinityIcon, Sparkles, ArrowRight, Link2, Smartphone, ShieldCheck } from "lucide-react";
 import logo from "@/assets/aura-logo.png";
 import { useReveal, useScrolled, useLenisScroll, useLiveUsers } from "@/hooks/use-aura-effects";
 import { testimonials, type Testimonial as TestimonialItem } from "@/data/testimonials";
@@ -60,38 +60,58 @@ function usePlatform(): Platform {
 }
 
 // ---------- Karing download (single source of truth) ----------
+// Google Play убран: ведёт на некорректную сборку. Android — только GitHub,
+// и только самый верхний APK в Assets (android_arm.apk), не arm64 / armeabi.
+const KARING_RELEASE =
+  "https://github.com/KaringX/karing/releases/tag/v1.2.25.2802";
+const KARING_ANDROID_APK_NAME = "karing_1.2.25.2802_android_arm.apk";
 const KARING_STORES = {
   ios: { href: "https://apps.apple.com/app/karing/id6472431552", icon: Apple, label: "App Store" },
-  android: { href: "https://play.google.com/store/apps/details?id=com.nebula.karing", icon: Play, label: "Google Play" },
-  other: { href: "https://github.com/KaringX/karing/releases/latest", icon: Github, label: "GitHub" },
+  github: { href: KARING_RELEASE, icon: Github, label: "GitHub" },
 } as const;
 
-/** Кнопки скачивания Karing, отсортированные по платформе (primary = магазин юзера). */
+/** Подсказка для Android: на релизе скачивать самый верхний APK. */
+function KaringAndroidTip({ className = "" }: { className?: string }) {
+  return (
+    <p className={`max-w-md text-left text-xs font-light leading-relaxed text-white/50 ${className}`}>
+      <span className="text-white/70">Android:</span> откройте GitHub → раздел{" "}
+      <span className="text-white/70">Assets</span> → скачайте{" "}
+      <span className="text-white/80">самый верхний файл</span> —{" "}
+      <span className="break-all text-white/70">{KARING_ANDROID_APK_NAME}</span>.
+      Файлы ниже (<span className="text-white/60">arm64</span>,{" "}
+      <span className="text-white/60">armeabi</span>) не ставьте.
+    </p>
+  );
+}
+
+/** Кнопки: только App Store и GitHub. На Android GitHub — primary + подсказка. */
 function KaringDownloadRow({ className = "" }: { className?: string }) {
   const platform = usePlatform();
-  const primaryStore =
-    platform === "ios" ? KARING_STORES.ios : platform === "android" ? KARING_STORES.android : null;
-  const secondaryStores = primaryStore
-    ? Object.entries(KARING_STORES).filter(([k]) => k !== (platform === "ios" ? "ios" : "android"))
-    : Object.entries(KARING_STORES);
+  const stores =
+    platform === "ios"
+      ? [KARING_STORES.ios, KARING_STORES.github]
+      : platform === "android"
+        ? [KARING_STORES.github, KARING_STORES.ios]
+        : [KARING_STORES.ios, KARING_STORES.github];
   return (
-    <div className={`flex flex-wrap gap-2 ${className}`}>
-      {primaryStore && (
-        <GhostButton href={primaryStore.href} className="!border-white/30 !bg-white/5">
-          <span className="flex items-center gap-2">
-            <primaryStore.icon className="h-4 w-4" strokeWidth={1.5} />
-            {primaryStore.label}
-          </span>
-        </GhostButton>
+    <div className={`flex flex-col gap-2.5 ${className}`}>
+      <div className="flex flex-wrap gap-2">
+        {stores.map((s, i) => (
+          <GhostButton
+            key={s.label}
+            href={s.href}
+            className={i === 0 ? "!border-white/30 !bg-white/5" : "opacity-60 hover:opacity-100"}
+          >
+            <span className="flex items-center gap-2">
+              <s.icon className="h-4 w-4" strokeWidth={1.5} />
+              {s.label}
+            </span>
+          </GhostButton>
+        ))}
+      </div>
+      {(platform === "android" || platform === "other") && (
+        <KaringAndroidTip className={platform === "other" ? "mx-auto text-center sm:text-left" : ""} />
       )}
-      {secondaryStores.map(([k, s]) => (
-        <GhostButton key={k} href={s.href} className="opacity-60 hover:opacity-100">
-          <span className="flex items-center gap-2">
-            <s.icon className="h-4 w-4" strokeWidth={1.5} />
-            {s.label}
-          </span>
-        </GhostButton>
-      ))}
     </div>
   );
 }
@@ -855,6 +875,9 @@ function ActiveScreen({
 
         <div className="mt-16 space-y-3">
           <StepCard step="1" title="Скачайте Karing">
+            <div className="mt-3 text-sm font-light text-white/70">
+              iPhone — App Store. Android и компьютер — GitHub (Google Play не используем).
+            </div>
             <KaringDownloadRow className="mt-4" />
           </StepCard>
           <StepCard step="2" title="При первом запуске выберите Русский язык и согласитесь с параметрами по умолчанию" />
